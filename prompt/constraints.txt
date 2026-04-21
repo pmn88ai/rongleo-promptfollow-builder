@@ -1,0 +1,7 @@
+GLOBAL CONSTRAINT:
+
+- không rewrite toàn bộ file
+- không thêm logic ngoài spec
+- không thay đổi schema
+- không hardcode
+- không dùng lib ngoài nếu chưa cho phép

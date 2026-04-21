@@ -1,0 +1,14 @@
+Dựa trên SPEC sau:
+
+[PASTE SPEC]
+
+Viết CONTRACT chi tiết:
+
+- function name
+- input type
+- output type
+- mapping logic (input → output)
+- invalid cases
+
+Format rõ ràng.
+Không giải thích.

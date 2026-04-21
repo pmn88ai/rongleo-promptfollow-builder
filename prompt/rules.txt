@@ -1,0 +1,6 @@
+WORKFLOW RULE:
+
+1. luôn có test trước khi code
+2. chỉ code 1 feature mỗi lần
+3. fix theo list, không tự suy diễn
+4. pass test mới được qua bước tiếp

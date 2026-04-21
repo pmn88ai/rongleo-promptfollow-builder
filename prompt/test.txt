@@ -1,0 +1,13 @@
+Dựa trên CONTRACT sau:
+
+[PASTE CONTRACT]
+
+Viết test bằng vitest:
+
+- ít nhất 8 test
+- gồm:
+  - happy case
+  - edge case
+  - invalid
+
+Không viết implementation.

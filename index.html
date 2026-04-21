@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptFlow Builder V3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* CSS Reset and Variables */
+:root {
+  --bg-color: #f8fafc;
+  --panel-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --danger-color: #ef4444;
+  --success-color: #10b981;
+  --input-bg: #f1f5f9;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] {
+  --bg-color: #0f172a;
+  --panel-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --accent-color: #3b82f6;
+  --accent-hover: #60a5fa;
+  --danger-color: #f87171;
+  --success-color: #34d399;
+  --input-bg: #0f172a;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; padding: 20px; }
+
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: linear-gradient(to right, var(--panel-bg), var(--input-bg)); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+h1 { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.header-actions { display: flex; gap: 10px; }
+
+.container { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.col { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+
+.block { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s; box-shadow: var(--shadow-sm); }
+.block:hover { box-shadow: var(--shadow-md); }
+.block-header { padding: 15px; background-color: var(--panel-bg); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; user-select: none; border-bottom: 1px solid transparent; }
+.block.expanded .block-header { border-bottom-color: var(--border-color); background-color: var(--input-bg); }
+.block-content { padding: 15px; display: none; }
+.block.expanded .block-content { display: block; animation: fadeIn 0.3s ease; }
+.block-header .icon { display: inline-block; transition: transform 0.3s; margin-left: 10px; font-size: 12px; }
+.block:not(.expanded) .block-header .icon { transform: rotate(-90deg); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Form Elements */
+label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+input[type="text"], textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--input-bg); color: var(--text-primary); font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
+input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--accent-color); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+textarea { resize: vertical; min-height: 80px; font-family: monospace; }
+input[type="text"].sm { padding: 8px; margin-bottom: 0; }
+
+button { padding: 10px 18px; border: none; border-radius: 8px; background-color: var(--accent-color); color: white; cursor: pointer; font-weight: 600; font-size: 14px; transition: background-color 0.2s, transform 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+button:hover { background-color: var(--accent-hover); }
+button:active { transform: scale(0.98); }
+button.danger { background-color: var(--danger-color); }
+button.danger:hover { background-color: #dc2626; }
+button.secondary { background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
+button.secondary:hover { background-color: var(--input-bg); border-color: var(--text-secondary); }
+button.small { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+button.success { background-color: var(--success-color); }
+button.success:hover { background-color: #059669; }
+
+/* Feature List */
+.feature-item, .category-item { background-color: var(--panel-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: var(--shadow-sm); }
+.feature-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; font-size: 15px; color: var(--accent-color); }
+.feature-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.feature-body input, .feature-body select { margin-bottom: 0; padding: 10px; }
+.feature-body .full-width { grid-column: 1 / -1; }
+
+.category-item { padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+
+/* Code Output */
+pre { background-color: var(--input-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); white-space: pre-wrap; font-family: monospace; font-size: 13px; max-height: 500px; overflow-y: auto; color: var(--text-primary); line-height: 1.5; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Utilities */
+.flex-between { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.mt-10 { margin-top: 10px; }
+.mb-10 { margin-bottom: 10px; }
+.w-full { width: 100%; }
+
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .col { min-width: 100%; }
+  .feature-body { grid-template-columns: 1fr; }
+  .header-actions { flex-wrap: wrap; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+  <h1>🧠 PromptFlow Builder <span id="syncStatus" style="font-size: 12px; margin-left: 10px; padding: 4px 8px; border-radius: 12px; background: rgba(255,255,255,0.1);">🔴 Disconnected</span></h1>
+  <div class="header-actions">
+    <button class="secondary" onclick="copyAll()">📋 Copy Tất Cả</button>
+    <button class="secondary" onclick="exportData()">💾 Xuất File</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="secondary" onclick="document.getElementById('importFile').click()">📂 Nhập File</button>
+    <button class="secondary" onclick="toggleTheme()">🌓 Giao Diện</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- LEFT COLUMN -->
+  <div class="col">
+    
+    <!-- IDEA & CONTEXT -->
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>1. Ý TƯỞNG & BỐI CẢNH</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <label>Ý Tưởng Chính / Yêu Cầu</label>
+        <textarea id="ideaInput" oninput="updateState('idea', this.value)" placeholder="Chúng ta đang xây dựng gì?"></textarea>
+        
+        <label>Ràng Buộc Chung (Constraints & Rules)</label>
+        <textarea id="constraintsInput" oninput="updateState('constraints', this.value)"></textarea>
+      </div>
+    </div>
+
+    <!-- FEATURE CATEGORIES -->
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>2. DANH MỤC TÍNH NĂNG</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <div class="flex-between mb-10" style="gap: 10px;">
+          <input type="text" id="newCategoryInput" class="sm" placeholder="Tên danh mục mới..." onkeypress="if(event.key === 'Enter') addCategory()">
+          <button onclick="addCategory()" class="small">Thêm</button>
+        </div>
+        <div id="categoryList"></div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>3. DANH SÁCH TÍNH NĂNG</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <button onclick="addNewFeature()" class="w-full mb-10">+ Thêm Tính Năng Mới</button>
+        <div id="featureList"></div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIATE DATA -->
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>4. PHẢN HỒI TỪ AI (Dán vào đây)</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <label>Kết quả Spec (dán vào đây để ra Contract)</label>
+        <textarea id="specInput" oninput="updateState('spec', this.value)"></textarea>
+        
+        <label>Kết quả Contract (dán vào đây để ra Test/Implement)</label>
+        <textarea id="contractInput" oninput="updateState('contract', this.value)"></textarea>
+        
+        <label>Kết quả Test Cases (dán vào đây để ra Implement)</label>
+        <textarea id="testInput" oninput="updateState('test', this.value)"></textarea>
+        
+        <label>Kết quả Code (dán vào đây để ra Review/Fix)</label>
+        <textarea id="codeInput" oninput="updateState('code', this.value)"></textarea>
+        
+        <label>Log Lỗi / Test Fail (dán vào đây để ra Fix)</label>
+        <textarea id="errorInput" oninput="updateState('error', this.value)"></textarea>
+      </div>
+    </div>
+
+    <!-- CUSTOM PROMPTS -->
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>5. PROMPT THƯỜNG DÙNG</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <button onclick="addCustomPrompt()" class="w-full mb-10">+ Thêm Prompt Mới</button>
+        <div id="customPromptList"></div>
+      </div>
+    </div>
+
+    <!-- TEMPLATES CONFIG -->
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <span>⚙️ CẤU HÌNH TEMPLATE</span>
+        <span class="icon">▼</span>
+      </div>
+      <div class="block-content">
+        <div class="flex-between mb-10">
+          <span style="font-size: 13px; color: var(--text-secondary)">Chỉnh sửa và lưu lại template cho dự án.</span>
+          <div>
+            <button class="secondary small" onclick="resetTemplates()">Khôi Phục Mặc Định</button>
+            <button class="success small" onclick="saveTemplatesConfig()">Lưu Cấu Hình</button>
+          </div>
+        </div>
+        
+        <label>Template Spec (Có sẵn: [YÊU CẦU])</label>
+        <textarea id="tpl_spec"></textarea>
+
+        <label>Template Contract (Có sẵn: [SPEC])</label>
+        <textarea id="tpl_contract"></textarea>
+
+        <label>Template Test (Có sẵn: [CONTRACT])</label>
+        <textarea id="tpl_test"></textarea>
+
+        <label>Template Implement (Có sẵn: [CONTRACT], [TEST], [CONSTRAINT])</label>
+        <textarea id="tpl_implement"></textarea>
+
+        <label>Template Review (Có sẵn: [CODE])</label>
+        <textarea id="tpl_review"></textarea>
+
+        <label>Template Fix (Có sẵn: [CODE], [ERROR])</label>
+        <textarea id="tpl_fix"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: OUTPUTS -->
+  <div class="col">
+    
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>📝 PROMPT SPEC</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('specPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="specPromptOut"></pre></div>
+    </div>
+
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>📄 PROMPT CONTRACT</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('contractPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="contractPromptOut"></pre></div>
+    </div>
+
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>🧪 PROMPT TEST</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('testPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="testPromptOut"></pre></div>
+    </div>
+
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>💻 PROMPT IMPLEMENT</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('implementPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="implementPromptOut"></pre></div>
+    </div>
+
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>🔍 PROMPT REVIEW</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('reviewPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="reviewPromptOut"></pre></div>
+    </div>
+
+    <div class="block expanded">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="flex-between">
+          <span>🛠️ PROMPT FIX</span>
+          <div>
+            <button class="small secondary" onclick="copyPrompt('fixPromptOut'); event.stopPropagation()">Copy</button>
+            <span class="icon">▼</span>
+          </div>
+        </div>
+      </div>
+      <div class="block-content"><pre id="fixPromptOut"></pre></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ==========================================
+// 1. STATE & CONSTANTS
+// ==========================================
+const STORAGE_KEY = 'promptflow_v3_data';
+const SUPABASE_URL = "https://tgsjsfplsolgbthvkcjk.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnc2pzZnBsc29sZ2J0aHZrY2prIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODY3OTYsImV4cCI6MjA5MDE2Mjc5Nn0.qFnnSPJ8ZjM1ymB3Ce-ixljuVZ7TmadmOOhMpbyE_Ho";
+const USER_ID = "RongLeo";
+const APP_ID = "PromptFlow-Builder";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function updateSyncStatus(status) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  if (status === 'connected') {
+    el.textContent = '🟢 Connected';
+  } else if (status === 'syncing') {
+    el.textContent = '🟡 Syncing...';
+  } else {
+    el.textContent = '🔴 Disconnected';
+  }
+}
+
+const defaultConstraints = `GLOBAL CONSTRAINT:\n\n- không rewrite toàn bộ file\n- không thêm logic ngoài spec\n- không thay đổi schema\n- không hardcode\n- không dùng lib ngoài nếu chưa cho phép\n\nWORKFLOW RULE:\n\n1. luôn có test trước khi code\n2. chỉ code 1 feature mỗi lần\n3. fix theo list, không tự suy diễn\n4. pass test mới được qua bước tiếp`;
+
+const defaultTemplates = {
+  spec: `Bạn là Technical Product Designer.\n\nChuyển ý tưởng sau thành SPEC NGẮN GỌN:\n\n[YÊU CẦU]\n\nOutput:\n1. GOAL (1-2 dòng)\n2. INPUT\n3. OUTPUT\n4. RULE (bullet rõ ràng)\n5. EDGE CASE\n\nKhông giải thích dài.\nKhông viết code.`,
+  contract: `Dựa trên SPEC sau:\n\n[SPEC]\n\nViết CONTRACT chi tiết:\n\n- function name\n- input type\n- output type\n- mapping logic (input → output)\n- invalid cases\n\nFormat rõ ràng.\nKhông giải thích.`,
+  test: `Dựa trên CONTRACT sau:\n\n[CONTRACT]\n\nViết test bằng vitest:\n\n- ít nhất 8 test\n- gồm:\n  - happy case\n  - edge case\n  - invalid\n\nKhông viết implementation.`,
+  implement: `Implement code theo:\n\nCONTRACT:\n[CONTRACT]\n\nTEST:\n[TEST]\n\nCONSTRAINT:\n[CONSTRAINT]\n\nYêu cầu:\n- code phải pass test\n- không thêm logic ngoài contract\n- code đơn giản`,
+  review: `Review code sau:\n\n[CODE]\n\nChỉ tìm:\n- lỗi logic\n- bug\n- edge case thiếu\n\nKHÔNG:\n- tối ưu\n- clean code\n- refactor\n\nOutput: danh sách lỗi ngắn gọn`,
+  fix: `Code hiện tại:\n[CODE]\n\nTest fail:\n[ERROR]\n\nHãy:\n- chỉ ra lỗi\n- tạo FIX LIST rõ:\n  - file\n  - dòng\n  - sửa gì\n\nKhông viết lại toàn bộ code.`
+};
+
+let state = {
+  theme: 'dark',
+  idea: '',
+  features: [],
+  customPrompts: [],
+  categories: ['UI', 'DATA', 'AI', 'SYNC'],
+  spec: '',
+  contract: '',
+  test: '',
+  code: '',
+  error: '',
+  constraints: defaultConstraints,
+  templates: { ...defaultTemplates }
+};
+
+// ==========================================
+// 2. CORE LOGIC
+// ==========================================
+function loadStateLocal() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      state = { 
+        ...state, 
+        ...parsed,
+        templates: { ...defaultTemplates, ...(parsed.templates || {}) }
+      };
+      if (!parsed.constraints) state.constraints = defaultConstraints;
+    } catch(e) { console.error('Failed to parse local storage'); }
+  }
+}
+
+async function loadState() {
+  loadStateLocal();
+  
+  try {
+    const { data, error } = await supabase
+      .from('promptflow_data')
+      .select('data')
+      .eq('user_id', USER_ID)
+      .eq('app_id', APP_ID)
+      .single();
+      
+    if (data && data.data) {
+      state = { 
+        ...state, 
+        ...data.data,
+        templates: { ...defaultTemplates, ...(data.data.templates || {}) }
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+    updateSyncStatus('connected');
+  } catch(e) {
+    updateSyncStatus('disconnected');
+  }
+}
+
+async function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    updateSyncStatus('syncing');
+    await supabase.from('promptflow_data').upsert({
+      user_id: USER_ID,
+      app_id: APP_ID,
+      data: state,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,app_id' });
+    updateSyncStatus('connected');
+  } catch(e) {
+    updateSyncStatus('disconnected');
+  }
+}
+
+function updateState(key, value) {
+  state[key] = value;
+  saveState();
+  renderOutputs();
+}
+
+function saveTemplatesConfig() {
+  state.templates.spec = document.getElementById('tpl_spec').value;
+  state.templates.contract = document.getElementById('tpl_contract').value;
+  state.templates.test = document.getElementById('tpl_test').value;
+  state.templates.implement = document.getElementById('tpl_implement').value;
+  state.templates.review = document.getElementById('tpl_review').value;
+  state.templates.fix = document.getElementById('tpl_fix').value;
+  saveState();
+  renderOutputs();
+  alert('Đã lưu cấu hình Template!');
+}
+
+function resetTemplates() {
+  if (confirm('Bạn có chắc muốn khôi phục toàn bộ template về mặc định?')) {
+    state.templates = { ...defaultTemplates };
+    saveState();
+    initUI();
+    alert('Đã khôi phục template mặc định!');
+  }
+}
+
+function escapeHtml(unsafe) {
+  return (unsafe || '').toString()
+       .replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#039;");
+}
+
+function toggleBlock(headerEl) {
+  headerEl.parentElement.classList.toggle('expanded');
+}
+
+// ==========================================
+// 3. FEATURE & CATEGORY MANAGEMENT
+// ==========================================
+function addCategory() {
+  const input = document.getElementById('newCategoryInput');
+  const val = input.value.trim();
+  if (val && !state.categories.includes(val)) {
+    state.categories.push(val);
+    input.value = '';
+    saveState();
+    renderCategories();
+    renderFeatures(); // Update dropdowns
+  }
+}
+
+function updateCategory(idx, val) {
+  const newVal = val.trim();
+  if (newVal) {
+    const oldVal = state.categories[idx];
+    state.categories[idx] = newVal;
+    state.features.forEach(f => {
+      if (f.category === oldVal) f.category = newVal;
+    });
+    saveState();
+    renderFeatures();
+  } else {
+    renderCategories();
+  }
+}
+
+function deleteCategory(idx) {
+  if (confirm('Xóa danh mục này?')) {
+    state.categories.splice(idx, 1);
+    saveState();
+    renderCategories();
+    renderFeatures();
+  }
+}
+
+function addNewFeature() {
+  state.features.push({
+    name: '', category: '', goal: '', input: '', output: '', 
+    rule: '', edge_case: '', test: '', constraint: ''
+  });
+  saveState();
+  renderFeatures();
+  renderOutputs();
+}
+
+function updateFeature(idx, field, value) {
+  state.features[idx][field] = value;
+  saveState();
+  renderOutputs();
+}
+
+function deleteFeature(idx) {
+  if (confirm('Xóa tính năng này?')) {
+    state.features.splice(idx, 1);
+    saveState();
+    renderFeatures();
+    renderOutputs();
+  }
+}
+
+// ==========================================
+// 4. CUSTOM PROMPTS MANAGEMENT
+// ==========================================
+function addCustomPrompt() {
+  state.customPrompts.push({
+    id: Date.now(),
+    name: '',
+    content: '',
+    stars: 1
+  });
+  state.customPrompts.sort((a, b) => b.stars - a.stars);
+  saveState();
+  renderCustomPrompts();
+}
+
+function updateCustomPrompt(id, field, value) {
+  const p = state.customPrompts.find(p => p.id === id);
+  if (p) {
+    p[field] = value;
+    saveState();
+    if (field === 'stars') {
+      state.customPrompts.sort((a, b) => b.stars - a.stars);
+      renderCustomPrompts();
+    }
+  }
+}
+
+function deleteCustomPrompt(id) {
+  if (confirm('Xóa prompt này?')) {
+    state.customPrompts = state.customPrompts.filter(p => p.id !== id);
+    saveState();
+    renderCustomPrompts();
+  }
+}
+
+function copyCustomPromptText(id) {
+  const p = state.customPrompts.find(p => p.id === id);
+  if (p) {
+    navigator.clipboard.writeText(p.content).then(() => {
+      alert('Đã copy prompt: ' + (p.name || 'Chưa đặt tên'));
+    });
+  }
+}
+
+// ==========================================
+// 5. RENDERERS
+// ==========================================
+function renderCategories() {
+  const container = document.getElementById('categoryList');
+  container.innerHTML = state.categories.map((c, idx) => `
+    <div class="category-item">
+      <input type="text" class="sm" value="${escapeHtml(c)}" onchange="updateCategory(${idx}, this.value)" style="flex:1">
+      <button class="small danger" onclick="deleteCategory(${idx})">Xóa</button>
+    </div>
+  `).join('');
+}
+
+function renderFeatures() {
+  const container = document.getElementById('featureList');
+  if (state.features.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-secondary); text-align:center; font-size:13px;">Chưa có tính năng nào.</p>`;
+    return;
+  }
+  container.innerHTML = state.features.map((f, idx) => `
+    <div class="feature-item">
+      <div class="feature-header">
+        <span>Tính Năng #${idx + 1}</span>
+        <button class="small danger" onclick="deleteFeature(${idx})">Xóa</button>
+      </div>
+      <div class="feature-body">
+        <input type="text" class="full-width" placeholder="Tên Tính Năng (NAME)" value="${escapeHtml(f.name)}" oninput="updateFeature(${idx}, 'name', this.value)">
+        <select class="full-width" onchange="updateFeature(${idx}, 'category', this.value)">
+          <option value="">-- Chọn Danh Mục --</option>
+          ${state.categories.map(c => `<option value="${escapeHtml(c)}" ${f.category === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+        </select>
+        <input type="text" class="full-width" placeholder="Mục Tiêu (GOAL)" value="${escapeHtml(f.goal)}" oninput="updateFeature(${idx}, 'goal', this.value)">
+        <input type="text" placeholder="Đầu Vào (INPUT)" value="${escapeHtml(f.input)}" oninput="updateFeature(${idx}, 'input', this.value)">
+        <input type="text" placeholder="Đầu Ra (OUTPUT)" value="${escapeHtml(f.output)}" oninput="updateFeature(${idx}, 'output', this.value)">
+        <input type="text" class="full-width" placeholder="Quy Tắc (RULE)" value="${escapeHtml(f.rule)}" oninput="updateFeature(${idx}, 'rule', this.value)">
+        <input type="text" class="full-width" placeholder="Trường Hợp Ngoại Lệ (EDGE CASE)" value="${escapeHtml(f.edge_case)}" oninput="updateFeature(${idx}, 'edge_case', this.value)">
+        <input type="text" placeholder="Test (TEST)" value="${escapeHtml(f.test)}" oninput="updateFeature(${idx}, 'test', this.value)">
+        <input type="text" placeholder="Ràng buộc (CONSTRAINT)" value="${escapeHtml(f.constraint)}" oninput="updateFeature(${idx}, 'constraint', this.value)">
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCustomPrompts() {
+  const container = document.getElementById('customPromptList');
+  if (!state.customPrompts || state.customPrompts.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-secondary); text-align:center; font-size:13px;">Chưa có prompt nào.</p>`;
+    return;
+  }
+  container.innerHTML = state.customPrompts.map((p) => `
+    <div class="feature-item" style="padding: 15px;">
+      <div class="flex-between mb-10">
+        <input type="text" placeholder="Tên Prompt" value="${escapeHtml(p.name)}" oninput="updateCustomPrompt(${p.id}, 'name', this.value)" style="flex:1; margin-bottom: 0; margin-right: 10px; padding: 8px;">
+        <select onchange="updateCustomPrompt(${p.id}, 'stars', parseInt(this.value))" style="width: 100px; margin-bottom: 0; margin-right: 10px; padding: 8px;">
+          <option value="3" ${p.stars === 3 ? 'selected' : ''}>⭐⭐⭐</option>
+          <option value="2" ${p.stars === 2 ? 'selected' : ''}>⭐⭐</option>
+          <option value="1" ${p.stars === 1 ? 'selected' : ''}>⭐</option>
+        </select>
+        <button class="small danger" onclick="deleteCustomPrompt(${p.id})">Xóa</button>
+      </div>
+      <textarea placeholder="Nội dung prompt..." oninput="updateCustomPrompt(${p.id}, 'content', this.value)" style="margin-bottom:10px; min-height: 60px;">${escapeHtml(p.content)}</textarea>
+      <button class="small secondary w-full" style="justify-content: center;" onclick="copyCustomPromptText(${p.id})">📋 Copy</button>
+    </div>
+  `).join('');
+}
+
+function getFullIdea() {
+  let text = state.idea ? state.idea + "\n\n" : "";
+  if (state.features && state.features.length > 0) {
+    state.features.forEach((f) => {
+      text += `FEATURE: ${f.name || 'Chưa đặt tên'} (${f.category || 'Chưa phân loại'})\n\n`;
+      text += `GOAL:\n${f.goal || '...'}\n\n`;
+      text += `INPUT:\n${f.input || '...'}\n\n`;
+      text += `OUTPUT:\n${f.output || '...'}\n\n`;
+      text += `RULE:\n${f.rule || '...'}\n\n`;
+      text += `EDGE CASE:\n${f.edge_case || '...'}\n\n`;
+      text += `TEST:\n${f.test || '...'}\n\n`;
+      text += `CONSTRAINT:\n${f.constraint || '...'}\n`;
+      text += `\n-----------------------------------\n\n`;
+    });
+  }
+  return text.trim();
+}
+
+function renderOutputs() {
+  const fullIdea = getFullIdea();
+  
+  const specPrompt = state.templates.spec.replace(/\[YÊU CẦU\]|\[IDEA\]/gi, fullIdea);
+  document.getElementById('specPromptOut').textContent = specPrompt;
+
+  const contractPrompt = state.templates.contract.replace(/\[SPEC\]|\[PASTE SPEC\]/gi, state.spec);
+  document.getElementById('contractPromptOut').textContent = contractPrompt;
+
+  const testPrompt = state.templates.test.replace(/\[CONTRACT\]|\[PASTE CONTRACT\]/gi, state.contract);
+  document.getElementById('testPromptOut').textContent = testPrompt;
+
+  const implementPrompt = state.templates.implement
+    .replace(/\[CONTRACT\]/gi, state.contract)
+    .replace(/\[TEST\]/gi, state.test)
+    .replace(/\[CONSTRAINT\]/gi, state.constraints)
+    .replace(/CONTRACT:\n\[PASTE\]/gi, "CONTRACT:\n" + state.contract)
+    .replace(/TEST:\n\[PASTE\]/g, "TEST:\n" + state.test)
+    .replace(/CONSTRAINT:\n\[PASTE\]/g, "CONSTRAINT:\n" + state.constraints);
+  document.getElementById('implementPromptOut').textContent = implementPrompt;
+
+  const reviewPrompt = state.templates.review.replace(/\[CODE\]|\[PASTE\]/gi, state.code);
+  document.getElementById('reviewPromptOut').textContent = reviewPrompt;
+
+  const fixPrompt = state.templates.fix
+    .replace(/\[CODE\]/gi, state.code)
+    .replace(/\[ERROR\]/gi, state.error)
+    .replace(/Code hiện tại:\n\[PASTE\]/gi, "Code hiện tại:\n" + state.code)
+    .replace(/Test fail:\n\[PASTE\]/gi, "Test fail:\n" + state.error);
+  document.getElementById('fixPromptOut').textContent = fixPrompt;
+}
+
+function initUI() {
+  document.documentElement.setAttribute('data-theme', state.theme);
+  
+  // Basic inputs
+  ['idea', 'spec', 'contract', 'test', 'code', 'error', 'constraints'].forEach(key => {
+    document.getElementById(`${key}Input`).value = state[key] || '';
+  });
+  
+  // Templates
+  ['spec', 'contract', 'test', 'implement', 'review', 'fix'].forEach(key => {
+    document.getElementById(`tpl_${key}`).value = state.templates[key];
+  });
+  
+  if (!state.customPrompts) state.customPrompts = [];
+  
+  renderCategories();
+  renderFeatures();
+  renderCustomPrompts();
+  renderOutputs();
+}
+
+// ==========================================
+// 6. UTILITIES (Copy, Export, Import, Theme)
+// ==========================================
+function copyPrompt(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const oldText = btn.textContent;
+    btn.textContent = 'Đã copy!';
+    setTimeout(() => { btn.textContent = oldText; }, 2000);
+  });
+}
+
+function copyAll() {
+  const prompts = ['specPromptOut', 'contractPromptOut', 'testPromptOut', 'implementPromptOut', 'reviewPromptOut', 'fixPromptOut'];
+  const allText = prompts.map(id => {
+    const title = id.replace('PromptOut', '').toUpperCase();
+    return `--- ${title} ---\n${document.getElementById(id).textContent}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(allText).then(() => alert('Đã copy tất cả prompt!'));
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "promptflow_backup.json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedState = JSON.parse(e.target.result);
+      state = { ...state, ...importedState };
+      saveState();
+      initUI();
+      alert("Nhập file thành công!");
+    } catch(err) {
+      alert("File JSON không hợp lệ");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // Reset file input
+}
+
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  saveState();
+}
+
+// ==========================================
+// ==========================================
+// 7. BOOTSTRAP
+// ==========================================
+function setupRealtime() {
+  supabase
+    .channel('public:promptflow_data')
+    .on('postgres_changes', { 
+      event: '*', 
+      schema: 'public', 
+      table: 'promptflow_data',
+      filter: `user_id=eq.${USER_ID}`
+    }, payload => {
+      if (payload.new && payload.new.app_id === APP_ID && payload.new.data) {
+        state = { 
+          ...state, 
+          ...payload.new.data,
+          templates: { ...defaultTemplates, ...(payload.new.data.templates || {}) }
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        initUI();
+      }
+    })
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        updateSyncStatus('connected');
+      } else {
+        updateSyncStatus('disconnected');
+      }
+    });
+}
+
+window.onload = async () => {
+  await loadState();
+  initUI();
+  setupRealtime();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Review code sau:
+
+[PASTE]
+
+Chỉ tìm:
+- lỗi logic
+- bug
+- edge case thiếu
+
+KHÔNG:
+- tối ưu
+- clean code
+- refactor
+
+Output: danh sách lỗi ngắn gọn

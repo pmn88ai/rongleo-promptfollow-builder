@@ -1,0 +1,14 @@
+Code hiện tại:
+[PASTE]
+
+Test fail:
+[PASTE]
+
+Hãy:
+- chỉ ra lỗi
+- tạo FIX LIST rõ:
+  - file
+  - dòng
+  - sửa gì
+
+Không viết lại toàn bộ code.

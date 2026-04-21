@@ -1,0 +1,15 @@
+Implement code theo:
+
+CONTRACT:
+[PASTE]
+
+TEST:
+[PASTE]
+
+CONSTRAINT:
+[PASTE]
+
+Yêu cầu:
+- code phải pass test
+- không thêm logic ngoài contract
+- code đơn giản
