@@ -507,15 +507,6 @@ pre.output-pre {
         <textarea id="contractInput" oninput="updateState('contract', this.value)"
           placeholder="Dán kết quả Contract AI trả về..." style="min-height:90px;"></textarea>
       </div>
-
-      <div class="section">
-        <div class="section-title">Review Contract</div>
-        <textarea id="reviewContractInput"
-          oninput="updateState('review_contract', this.value)"
-          placeholder="Dán kết quả review contract..."
-          style="min-height:90px;"></textarea>
-      </div>
-
       <div class="section">
         <div class="section-title">Kết Quả Test Cases từ AI</div>
         <textarea id="testInput" oninput="updateState('test', this.value)"
@@ -560,12 +551,6 @@ pre.output-pre {
         <div class="section-title">CONTRACT <small>[PASTE SPEC]</small></div>
         <textarea id="tpl_contract" style="min-height:130px;"></textarea>
       </div>
-
-      <div class="section">
-        <div class="section-title">REVIEW CONTRACT</div>
-        <textarea id="tpl_review_contract" style="min-height:130px;"></textarea>
-      </div>
-
       <div class="section">
         <div class="section-title">TEST <small>[PASTE CONTRACT]</small></div>
         <textarea id="tpl_test" style="min-height:130px;"></textarea>
@@ -592,7 +577,6 @@ pre.output-pre {
     <div class="output-tab-bar">
       <button class="output-tab-btn active" onclick="switchOutput('spec', this)">📝 SPEC</button>
       <button class="output-tab-btn" onclick="switchOutput('contract', this)">📄 CONTRACT</button>
-      <button class="output-tab-btn" onclick="switchOutput('review_contract', this)">🧠 REVIEW CONTRACT</button>
       <button class="output-tab-btn" onclick="switchOutput('test', this)">🧪 TEST</button>
       <button class="output-tab-btn" onclick="switchOutput('implement', this)">💻 IMPLEMENT</button>
       <button class="output-tab-btn" onclick="switchOutput('review', this)">🔍 REVIEW</button>
@@ -615,17 +599,6 @@ pre.output-pre {
           <button onclick="copyPrompt(event, 'contractPromptOut')">📋 Copy</button>
         </div>
         <pre class="output-pre" id="contractPromptOut"></pre>
-      </div>
-
-      <div class="output-pane" id="out-review_contract">
-        <div class="output-meta">
-          <span class="output-hint">
-            <span class="step-label">Bước 2.5</span>
-            Review Contract trước khi viết test
-          </span>
-          <button onclick="copyPrompt(event, 'reviewContractPromptOut')">📋 Copy</button>
-        </div>
-        <pre class="output-pre" id="reviewContractPromptOut"></pre>
       </div>
 
       <div class="output-pane" id="out-test">
@@ -735,19 +708,6 @@ Viết CONTRACT chi tiết:
 Format rõ ràng.
 Không giải thích.`,
 
-review_contract:
-`Dựa trên CONTRACT sau:
-
-[PASTE CONTRACT]
-
-Hãy:
-- tìm inconsistency với SPEC
-- tìm thiếu case
-- tìm ambiguity
-
-Output:
-- danh sách lỗi ngắn gọn`,
-
   test:
 `Dựa trên CONTRACT sau:
 
@@ -822,7 +782,6 @@ let state = {
   categories:    ['UI', 'DATA', 'AI', 'SYNC'],
   spec:          '',
   contract:      '',
-  review_contract: '',
   test:          '',
   code:          '',
   error:         '',
@@ -902,7 +861,7 @@ function updateState(key, value) {
 }
 
 function saveTemplatesConfig() {
-  ['spec','contract','review_contract','test','implement','review','fix'].forEach(key => {
+  ['spec', 'contract', 'test', 'implement', 'review', 'fix'].forEach(key => {
     const el = document.getElementById('tpl_' + key);
     if (el) state.templates[key] = el.value;
   });
@@ -1157,12 +1116,6 @@ function renderOutputs() {
   set('contractPromptOut',
     tpl.contract.replace(/\[SPEC\]|\[PASTE SPEC\]/gi, state.spec)
   );
-
-  set('reviewContractPromptOut',
-    tpl.review_contract
-      .replace(/\[PASTE CONTRACT\]/gi, state.contract)
-  );
-
   set('testPromptOut',
     tpl.test.replace(/\[CONTRACT\]|\[PASTE CONTRACT\]/gi, state.contract)
   );
@@ -1197,7 +1150,6 @@ function initUI() {
     ideaInput:        'idea',
     specInput:        'spec',
     contractInput:    'contract',
-    reviewContractInput: 'review_contract',
     testInput:        'test',
     codeInput:        'code',
     errorInput:       'error',
@@ -1208,7 +1160,7 @@ function initUI() {
     if (el) el.value = state[key] || '';
   });
 
-  ['spec','contract','review_contract','test','implement','review','fix'].forEach(key => {
+  ['spec','contract','test','implement','review','fix'].forEach(key => {
     const el = document.getElementById('tpl_' + key);
     if (el) el.value = state.templates[key] || '';
   });
