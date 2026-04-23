@@ -1,15 +1,45 @@
-Implement code theo:
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+You are a senior frontend engineer.
+
+Given:
+- Feature spec
+- Contract
+- Test cases
+
+Task:
+Generate clean React/Next.js code.
+
+Rules:
+- DO NOT overwrite unrelated files
+- Only output necessary files
+- Reuse existing components if possible
+------------------------
 CONTRACT:
 [PASTE]
-
+------------------------
 TEST:
 [PASTE]
-
+------------------------
 CONSTRAINT:
 [PASTE]
-
+------------------------
 Yêu cầu:
-- code phải pass test
-- không thêm logic ngoài contract
-- code đơn giản
+- logic không lệch contract
+- UI phản ánh đúng state
+- không có hành vi ngầm
+- Mỗi app phải đặt trong route riêng: /<feature-name>
+- Component phải nằm trong components/<feature-name>/
+- Không dùng component global nếu không cần
+
+Output:
+{
+  "files": [
+    {
+      "path": "",
+      "content": ""
+    }
+  ]
+}

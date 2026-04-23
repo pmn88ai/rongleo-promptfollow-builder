@@ -1,0 +1,30 @@
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+
+- Missing field?
+- Sai type?
+- Sai flow?
+- Edge case thiếu?
+
+Output:
+- Danh sách mismatch
+- Fix đề xuất
+
+Output JSON:
+{
+  "mismatches": [
+    {
+      "field": "",
+      "issue": "",
+      "severity": "low | medium | high",
+      "fix": ""
+    }
+  ]
+}
+----------------------
+[PASTE SPEC]
+
+----------------------
+CONTRACT:
+[PASTE]

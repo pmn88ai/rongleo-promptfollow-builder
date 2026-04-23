@@ -1,11 +1,16 @@
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+
 Review code sau:
-
+-------------------------
 [PASTE]
-
+-------------------------
 Chỉ tìm:
 - lỗi logic
 - bug
 - edge case thiếu
+- contract mismatch
 
 KHÔNG:
 - tối ưu
@@ -13,3 +18,15 @@ KHÔNG:
 - refactor
 
 Output: danh sách lỗi ngắn gọn
+
+Output JSON:
+{
+  "issues": [
+    {
+      "type": "logic | bug | missing_edge",
+      "description": "",
+      "impact": "",
+      "fix_hint": ""
+    }
+  ]
+}

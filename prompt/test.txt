@@ -1,13 +1,32 @@
-Dựa trên CONTRACT sau:
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+Generate test case Dựa trên SPEC và CONTRACT sau:
+----------------------
+[PASTE SPEC]
+------------------------
 [PASTE CONTRACT]
-
+------------------------
 Viết test bằng vitest:
 
 - ít nhất 8 test
 - gồm:
-  - happy case
-  - edge case
-  - invalid
+    - happy path
+    - edge cases
+    - error cases
+    - UI state test
+    - invalid input test
 
 Không viết implementation.
+
+Output JSON:
+{
+  "tests": [
+    {
+      "type": "happy | edge | invalid",
+      "input": {},
+      "expected": {}
+    }
+  ]
+}

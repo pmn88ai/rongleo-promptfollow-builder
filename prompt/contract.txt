@@ -1,7 +1,12 @@
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+
+Create strict contract JSON from this design, đưa code không cần tạo file:
 Dựa trên SPEC sau:
-
+----------------------------
 [PASTE SPEC]
-
+----------------------------
 Viết CONTRACT chi tiết:
 
 - function name
@@ -9,6 +14,22 @@ Viết CONTRACT chi tiết:
 - output type
 - mapping logic (input → output)
 - invalid cases
+- endpoints
+- input/output schema
+- error cases
+
+Output JSON:
+{
+  "functions": [
+    {
+      "name": "",
+      "input": {},
+      "output": {},
+      "logic": "",
+      "errors": []
+    }
+  ]
+}
 
 Format rõ ràng.
 Không giải thích.

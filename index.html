@@ -699,31 +699,51 @@ WORKFLOW RULE:
 1. luôn có test trước khi code
 2. chỉ code 1 feature mỗi lần
 3. fix theo list, không tự suy diễn
-4. pass test mới được qua bước tiếp`;
+4. pass test mới được qua bước tiếp
+5. Nếu vi phạm → phải báo lỗi trong output`;
 
 const defaultTemplates = {
   spec:
-`Bạn là Technical Product Designer.
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+
+Bạn là Technical Product Designer.
 
 Chuyển ý tưởng sau thành SPEC NGẮN GỌN:
-
+------------------------
 [YÊU CẦU]
-
+------------------------
 Output:
 1. GOAL (1-2 dòng)
 2. INPUT
 3. OUTPUT
 4. RULE (bullet rõ ràng)
 5. EDGE CASE
+6. Constraints
+
+Output JSON:
+{
+  "goal": "",
+  "input": [],
+  "output": [],
+  "rules": [],
+  "edge_cases": []
+}
 
 Không giải thích dài.
 Không viết code.`,
 
   contract:
-`Dựa trên SPEC sau:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+Create strict contract JSON from this design, đưa code không cần tạo file:
+Dựa trên SPEC sau:
+----------------------------
 [PASTE SPEC]
-
+----------------------------
 Viết CONTRACT chi tiết:
 
 - function name
@@ -731,85 +751,213 @@ Viết CONTRACT chi tiết:
 - output type
 - mapping logic (input → output)
 - invalid cases
+- endpoints
+- input/output schema
+- error cases
+
+Output JSON:
+{
+  "functions": [
+    {
+      "name": "",
+      "input": {},
+      "output": {},
+      "logic": "",
+      "errors": []
+    }
+  ]
+}
 
 Format rõ ràng.
 Không giải thích.`,
 
 review_contract:
-`Dựa trên CONTRACT sau:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+Dựa trên Spec và Contract sau:
+----------------------
+[PASTE SPEC]
+
+----------------------
 [PASTE CONTRACT]
-
-Hãy:
-- tìm inconsistency với SPEC
-- tìm thiếu case
-- tìm ambiguity
+----------------------
+- Missing field?
+- Sai type?
+- Sai flow?
+- Edge case thiếu?
 
 Output:
-- danh sách lỗi ngắn gọn`,
+- Danh sách mismatch
+- Fix đề xuất
+
+Output JSON:
+{
+  "mismatches": [
+    {
+      "field": "",
+      "issue": "",
+      "severity": "low | medium | high",
+      "fix": ""
+    }
+  ]
+}`,
 
   test:
-`Dựa trên CONTRACT sau:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+Generate test case Dựa trên SPEC và CONTRACT sau:
+----------------------
+[PASTE SPEC]
+------------------------
 [PASTE CONTRACT]
-
+------------------------
 Viết test bằng vitest:
 
 - ít nhất 8 test
 - gồm:
-  - happy case
-  - edge case
-  - invalid
+    - happy path
+    - edge cases
+    - error cases
+    - UI state test
+    - invalid input test
 
-Không viết implementation.`,
+Không viết implementation.
+
+Output JSON:
+{
+  "tests": [
+    {
+      "type": "happy | edge | invalid",
+      "input": {},
+      "expected": {}
+    }
+  ]
+}`,
 
   implement:
-`Implement code theo:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
+You are a senior frontend engineer.
+
+Given:
+- Feature spec
+- Contract
+- Test cases
+
+Task:
+Generate clean React/Next.js code.
+
+Rules:
+- DO NOT overwrite unrelated files
+- Only output necessary files
+- Reuse existing components if possible
+------------------------
 CONTRACT:
 [PASTE]
-
+------------------------
 TEST:
 [PASTE]
-
+------------------------
 CONSTRAINT:
 [PASTE]
-
+------------------------
 Yêu cầu:
-- code phải pass test
-- không thêm logic ngoài contract
-- code đơn giản`,
+- logic không lệch contract
+- UI phản ánh đúng state
+- không có hành vi ngầm
+- Mỗi app phải đặt trong route riêng: /<feature-name>
+- Component phải nằm trong components/<feature-name>/
+- Không dùng component global nếu không cần
+
+Output:
+{
+  "files": [
+    {
+      "path": "",
+      "content": ""
+    }
+  ]
+}`,
 
   review:
-`Review code sau:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
 
-[PASTE]
-
+Dựa trên Spec, Contrac, Review code sau:
+----------------------
+[PASTE SPEC]
+------------------------
+[PASTE CONTRACT]
+-------------------------
+[PASTE CODE]
+-------------------------
 Chỉ tìm:
 - lỗi logic
 - bug
 - edge case thiếu
+- contract mismatch
 
 KHÔNG:
 - tối ưu
 - clean code
 - refactor
 
-Output: danh sách lỗi ngắn gọn`,
+Output: danh sách lỗi ngắn gọn
+
+Output JSON:
+{
+  "issues": [
+    {
+      "type": "logic | bug | missing_edge",
+      "description": "",
+      "impact": "",
+      "fix_hint": ""
+    }
+  ]
+}`,
 
   fix:
-`Code hiện tại:
+`LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+Dựa trên Spec, Contract, Code, Lỗi hiện tại.
+--------------------------
+Spec hiện tại:
 [PASTE]
-
+--------------------------
+Contract hiện tại:
+[PASTE]
+--------------------------
+Code hiện tại:
+[PASTE]
+--------------------------
 Test fail:
 [PASTE]
-
+--------------------------
 Hãy:
 - chỉ ra lỗi
 - tạo FIX LIST rõ:
   - file
   - dòng
   - sửa gì
+
+Output JSON:
+{
+  "fixes": [
+    {
+      "file": "",
+      "line": "",
+      "change": ""
+    }
+  ]
+}
 
 Không viết lại toàn bộ code.`
 };
@@ -1147,41 +1295,66 @@ function renderOutputs() {
   const tpl  = state.templates;
 
   const set = (id, text) => {
-    const el = document.getElementById(id);
+  const el = document.getElementById(id);
     if (el) el.textContent = text;
   };
 
+  // SPEC
   set('specPromptOut',
     tpl.spec.replace(/\[YÊU CẦU\]|\[IDEA\]/gi, idea)
   );
+
+  // CONTRACT (cần SPEC)
   set('contractPromptOut',
-    tpl.contract.replace(/\[SPEC\]|\[PASTE SPEC\]/gi, state.spec)
+    tpl.contract.replace(/\[PASTE SPEC\]|\[SPEC\]/gi, state.spec)
   );
 
+  // REVIEW CONTRACT (cần SPEC + CONTRACT)
   set('reviewContractPromptOut',
     tpl.review_contract
+      .replace(/\[PASTE SPEC\]/gi, state.spec)
+      .replace(/\[PASTE\]/gi, state.spec) // fallback
       .replace(/\[PASTE CONTRACT\]/gi, state.contract)
   );
 
+  // TEST (cần SPEC + CONTRACT)
   set('testPromptOut',
-    tpl.test.replace(/\[CONTRACT\]|\[PASTE CONTRACT\]/gi, state.contract)
+    tpl.test
+      .replace(/\[PASTE SPEC\]/gi, state.spec)
+      .replace(/\[PASTE CONTRACT\]|\[CONTRACT\]/gi, state.contract)
   );
+
+  // IMPLEMENT (thiếu SPEC → FIX)
   set('implementPromptOut',
     tpl.implement
       .replace(/CONTRACT:\n\[PASTE\]/gi, 'CONTRACT:\n' + state.contract)
       .replace(/TEST:\n\[PASTE\]/gi,     'TEST:\n'     + state.test)
       .replace(/CONSTRAINT:\n\[PASTE\]/gi,'CONSTRAINT:\n'+ state.constraints)
+
+      // 🔥 THÊM SPEC (quan trọng)
+      .replace(/\[SPEC\]/gi, state.spec)
+
       .replace(/\[CONTRACT\]/gi, state.contract)
       .replace(/\[TEST\]/gi,     state.test)
       .replace(/\[CONSTRAINT\]/gi, state.constraints)
   );
+
+  // REVIEW (thiếu SPEC + CONTRACT → FIX)
   set('reviewPromptOut',
-    tpl.review.replace(/\[CODE\]|\[PASTE\]/gi, state.code)
+    tpl.review
+      .replace(/\[PASTE SPEC\]/gi, state.spec)
+      .replace(/\[PASTE CONTRACT\]/gi, state.contract)
+      .replace(/\[CODE\]|\[PASTE\]/gi, state.code)
   );
+
+  // FIX (thiếu SPEC + CONTRACT → FIX)
   set('fixPromptOut',
     tpl.fix
+      .replace(/Spec hiện tại:\n\[PASTE\]/gi, 'Spec hiện tại:\n' + state.spec)
+      .replace(/Contract hiện tại:\n\[PASTE\]/gi, 'Contract hiện tại:\n' + state.contract)
       .replace(/Code hiện tại:\n\[PASTE\]/gi, 'Code hiện tại:\n' + state.code)
       .replace(/Test fail:\n\[PASTE\]/gi,      'Test fail:\n'     + state.error)
+
       .replace(/\[CODE\]/gi,  state.code)
       .replace(/\[ERROR\]/gi, state.error)
   );

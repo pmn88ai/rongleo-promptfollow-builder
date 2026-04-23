@@ -1,6 +1,6 @@
 🧠 PromptFlow Builder
 
-Biến ý tưởng → SPEC → CONTRACT → TEST → IMPLEMENT → REVIEW → FIX
+Biến ý tưởng → SPEC → CONTRACT → REVIEW_CONTRACT → TEST → IMPLEMENT → REVIEW → FIX
 Tất cả trong 1 workflow có cấu trúc, không còn chat lung tung.
 
 🚀 Overview
@@ -22,6 +22,7 @@ Build feature theo quy trình rõ ràng như “bản vẽ thi công”
 Idea
 → SPEC
 → CONTRACT
+→ REVIEW_CONTRACT
 → TEST
 → IMPLEMENT
 → REVIEW

@@ -1,14 +1,36 @@
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+Dựa trên Spec, Contract, Code, Lỗi hiện tại.
+--------------------------
+Spec hiện tại:
+[PASTE]
+--------------------------
+Contract hiện tại:
+[PASTE]
+--------------------------
 Code hiện tại:
 [PASTE]
-
+--------------------------
 Test fail:
 [PASTE]
-
+--------------------------
 Hãy:
 - chỉ ra lỗi
 - tạo FIX LIST rõ:
   - file
   - dòng
   - sửa gì
+
+Output JSON:
+{
+  "fixes": [
+    {
+      "file": "",
+      "line": "",
+      "change": ""
+    }
+  ]
+}
 
 Không viết lại toàn bộ code.

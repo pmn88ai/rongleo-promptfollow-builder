@@ -1,6 +1,11 @@
+LUÔN trả lời bằng tiếng Việt.
+UI, text trong ứng dụng phải là tiếng Việt.
+Code comment dùng tiếng Việt (ngắn gọn).
+
 WORKFLOW RULE:
 
 1. luôn có test trước khi code
 2. chỉ code 1 feature mỗi lần
 3. fix theo list, không tự suy diễn
 4. pass test mới được qua bước tiếp
+5. Nếu vi phạm → phải báo lỗi trong output
