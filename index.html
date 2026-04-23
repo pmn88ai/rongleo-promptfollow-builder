@@ -712,6 +712,7 @@ Bạn là Technical Product Designer.
 
 Chuyển ý tưởng sau thành SPEC NGẮN GỌN:
 ------------------------
+YÊU CẦU:
 [YÊU CẦU]
 ------------------------
 Output:
@@ -742,6 +743,7 @@ Code comment dùng tiếng Việt (ngắn gọn).
 Create strict contract JSON from this design, đưa code không cần tạo file:
 Dựa trên SPEC sau:
 ----------------------------
+SPEC:
 [PASTE SPEC]
 ----------------------------
 Viết CONTRACT chi tiết:
@@ -778,9 +780,10 @@ Code comment dùng tiếng Việt (ngắn gọn).
 
 Dựa trên Spec và Contract sau:
 ----------------------
+SPEC:
 [PASTE SPEC]
-
 ----------------------
+CONTRACT:
 [PASTE CONTRACT]
 ----------------------
 - Missing field?
@@ -811,8 +814,10 @@ Code comment dùng tiếng Việt (ngắn gọn).
 
 Generate test case Dựa trên SPEC và CONTRACT sau:
 ----------------------
+SPEC:
 [PASTE SPEC]
 ------------------------
+CONTRACT:
 [PASTE CONTRACT]
 ------------------------
 Viết test bằng vitest:
@@ -844,7 +849,19 @@ UI, text trong ứng dụng phải là tiếng Việt.
 Code comment dùng tiếng Việt (ngắn gọn).
 
 You are a senior frontend engineer.
-
+----------------------
+SPEC:
+[PASTE SPEC]
+------------------------
+CONTRACT:
+[PASTE CONTRACT]
+------------------------
+TEST:
+[PASTE TEST]
+------------------------
+CONSTRAINT:
+[PASTE CONSTRAINT]
+------------------------
 Given:
 - Feature spec
 - Contract
@@ -857,16 +874,6 @@ Rules:
 - DO NOT overwrite unrelated files
 - Only output necessary files
 - Reuse existing components if possible
-------------------------
-CONTRACT:
-[PASTE]
-------------------------
-TEST:
-[PASTE]
-------------------------
-CONSTRAINT:
-[PASTE]
-------------------------
 Yêu cầu:
 - logic không lệch contract
 - UI phản ánh đúng state
@@ -892,10 +899,13 @@ Code comment dùng tiếng Việt (ngắn gọn).
 
 Dựa trên Spec, Contrac, Review code sau:
 ----------------------
+SPEC:
 [PASTE SPEC]
 ------------------------
+CONTRACT:
 [PASTE CONTRACT]
 -------------------------
+CODE:
 [PASTE CODE]
 -------------------------
 Chỉ tìm:
@@ -929,17 +939,17 @@ UI, text trong ứng dụng phải là tiếng Việt.
 Code comment dùng tiếng Việt (ngắn gọn).
 Dựa trên Spec, Contract, Code, Lỗi hiện tại.
 --------------------------
-Spec hiện tại:
-[PASTE]
+SPEC:
+[PASTE SPEC]
 --------------------------
-Contract hiện tại:
-[PASTE]
+CONTRACT:
+[PASTE CONTRACT]
 --------------------------
-Code hiện tại:
-[PASTE]
+CODE:
+[PASTE CODE]
 --------------------------
-Test fail:
-[PASTE]
+TEST FAIL:
+[PASTE FAIL]
 --------------------------
 Hãy:
 - chỉ ra lỗi
@@ -1313,7 +1323,6 @@ function renderOutputs() {
   set('reviewContractPromptOut',
     tpl.review_contract
       .replace(/\[PASTE SPEC\]/gi, state.spec)
-      .replace(/\[PASTE\]/gi, state.spec) // fallback
       .replace(/\[PASTE CONTRACT\]/gi, state.contract)
   );
 
@@ -1321,22 +1330,16 @@ function renderOutputs() {
   set('testPromptOut',
     tpl.test
       .replace(/\[PASTE SPEC\]/gi, state.spec)
-      .replace(/\[PASTE CONTRACT\]|\[CONTRACT\]/gi, state.contract)
+      .replace(/\[PASTE CONTRACT\]/gi, state.contract)
   );
 
   // IMPLEMENT (thiếu SPEC → FIX)
   set('implementPromptOut',
     tpl.implement
-      .replace(/CONTRACT:\n\[PASTE\]/gi, 'CONTRACT:\n' + state.contract)
-      .replace(/TEST:\n\[PASTE\]/gi,     'TEST:\n'     + state.test)
-      .replace(/CONSTRAINT:\n\[PASTE\]/gi,'CONSTRAINT:\n'+ state.constraints)
-
-      // 🔥 THÊM SPEC (quan trọng)
-      .replace(/\[SPEC\]/gi, state.spec)
-
-      .replace(/\[CONTRACT\]/gi, state.contract)
-      .replace(/\[TEST\]/gi,     state.test)
-      .replace(/\[CONSTRAINT\]/gi, state.constraints)
+      .replace(/\[PASTE SPEC\]/gi, state.spec)
+      .replace(/\[PASTE CONTRACT\]/gi, state.contract)
+      .replace(/\[PASTE TEST\]/gi, state.test)
+      .replace(/\[PASTE CONSTRAINT\]/gi, state.constraints)     
   );
 
   // REVIEW (thiếu SPEC + CONTRACT → FIX)
@@ -1344,19 +1347,16 @@ function renderOutputs() {
     tpl.review
       .replace(/\[PASTE SPEC\]/gi, state.spec)
       .replace(/\[PASTE CONTRACT\]/gi, state.contract)
-      .replace(/\[CODE\]|\[PASTE\]/gi, state.code)
+      .replace(/\[PASTE CODE\]/gi, state.code)
   );
 
   // FIX (thiếu SPEC + CONTRACT → FIX)
   set('fixPromptOut',
     tpl.fix
-      .replace(/Spec hiện tại:\n\[PASTE\]/gi, 'Spec hiện tại:\n' + state.spec)
-      .replace(/Contract hiện tại:\n\[PASTE\]/gi, 'Contract hiện tại:\n' + state.contract)
-      .replace(/Code hiện tại:\n\[PASTE\]/gi, 'Code hiện tại:\n' + state.code)
-      .replace(/Test fail:\n\[PASTE\]/gi,      'Test fail:\n'     + state.error)
-
-      .replace(/\[CODE\]/gi,  state.code)
-      .replace(/\[ERROR\]/gi, state.error)
+      .replace(/\[PASTE SPEC\]/gi, state.spec)
+      .replace(/\[PASTE CONTRACT\]/gi, state.contract)
+      .replace(/\[PASTE CODE\]/gi, state.code)
+      .replace(/\[PASTE FAIL\]/gi, state.error)
   );
 }
 
